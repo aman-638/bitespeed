@@ -13,7 +13,11 @@ import DeleteButton from "../src/assets/trash.png";
 
 // This is the Default Text Node
 const TextNode = ({ data }) => (
-  <div className="bg-white shadow-md rounded">
+  <div
+    className={`bg-white shadow-md rounded ${
+      data?.selected === true && " border-2 border-blue-400"
+    } `}
+  >
     <div className="bg-[#b2f0e3] flex justify-between items-center p-2 gap-2 rounded">
       <img src={Message} className="w-4 h-4" />
       <p>Send Message</p>
@@ -107,7 +111,7 @@ function FlowBuilder() {
       id: `node-${nodes.length + 1}`,
       type,
       position,
-      data: { label: `text message ${nodes.length + 1}` },
+      data: { label: `text message ${nodes.length + 1}`, selected: false },
     };
 
     setNodes((nds) => nds.concat(newNode));
@@ -120,6 +124,16 @@ function FlowBuilder() {
       setSelectedNode(element);
       setNodeName(element.data.label);
     }
+    setNodes((nds) =>
+      nds.map((nd) => {
+        if (nd.id === element.id) {
+          nd.data = { ...nd.data, selected: true };
+        } else {
+          nd.data = { ...nd.data, selected: false };
+        }
+        return nd;
+      })
+    );
   };
 
   const onNodeNameChange = (event) => {
@@ -146,6 +160,12 @@ function FlowBuilder() {
       console.log("Flow saved", nodes, edges);
       setSelectedNode(null); // Reset the selected node
       setNodeName(""); // Clear the node name input
+      setNodes((nds) =>
+        nds.map((nd) => {
+          nd.data = { ...nd.data, selected: false };
+          return nd;
+        })
+      );
       alert("Changes saved Succesfully!");
     }
   };
